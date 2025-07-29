@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image-restoration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* Base Styles */
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #eaf7ea; /* Light green background */
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensure body takes full height */
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: #9400D3; /* Deep green for navbar */
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .navbar .nav-items {
+            display: flex;
+            gap: 20px;
+            position: relative; /* Make position relative for dropdown */
+        }
+
+        .navbar a {
+            color: #fff;
+            font-size: 1.1rem;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: #66bb6a; /* Lighter green for hover */
+        }
+
+        /* Dropdown Menu */
+        .dropdown {
+            position: relative; /* Relative positioning for dropdown */
+        }
+
+        .dropdown-menu {
+            display: none; /* Hide dropdown by default */
+            position: absolute;
+            top: 100%; /* Position below the dropdown */
+            left: 0;
+            background-color: blueviolet;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin-top: 5px; /* Space between link and dropdown */
+            z-index: 1000; /* Ensure it appears above other content */
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            color: #333;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: lightblue; /* Light gray for hover */
+        }
+
+        /* Hero Section */
+        .hero {
+            background-image: url('https://source.unsplash.com/featured/?nature,green');
+            background-size: cover;
+            background-position: center;
+            padding: 100px 0;
+            text-align: center;
+            color: #fff;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-top: 15px;
+        }
+
+        /* Main Container */
+        .container {
+            flex: 1; /* Make the container take available space */
+            display: flex;
+            justify-content: center; /* Center align items horizontally */
+            align-items: center; /* Center align items vertically */
+            padding: 20px;
+        }
+
+        /* Upload Dataset Card */
+        .card {
+            width: 100%; /* Full width */
+            max-width: 600px; /* Max width for the card */
+            text-align: center;
+            margin: auto; /* Center the card */
+            padding: 20px; /* Padding inside the card */
+            border: 2px solid #9400D3; /* Deep green border */
+            border-radius: 10px; /* Rounded corners */
+            background-color: white; /* White background for the card */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+        }
+
+        .card-header {
+            background-color: #9400D3; /* Deep green for card header */
+            color: white;
+            padding: 10px;
+            border-radius: 10px 10px 0 0; /* Rounded top corners */
+        }
+
+        /* Footer Styling */
+        .footer {
+            background-color: #9400D3; /* Matching deep green for footer */
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: #66bb6a; /* Light green for link */
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Button Styling */
+        .custom-button {
+            background-color: #9400D3; /* Deep green for button */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-button:hover {
+            background-color: #66bb6a; /* Lighter green for button hover */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <h1> Admin</h1>
+        <div class="nav-items">
+            <a href="{% url 'admindashboard' %}">Dashboard</a>
+            <a href="{% url 'upload' %}">Upload Dataset</a>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle">Model</a>
+                <div class="dropdown-menu">
+                    <a href="{% url 'gan_cnn' %}" class="dropdown-item">gan_cnn</a>
+
+                </div>
+            </div>
+            <a href="{% url 'index' %}">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <!-- Upload Dataset Card -->
+            <div class="col-md-12">
+                <div class="card text-center mb-4">
+                    <div class="card-header">
+                        <h5>Upload Dataset</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <p class="card-text">Upload and manage your datasets for model training.</p>
+                            <input type="file" class="form-control" id="fileInput" webkitdirectory multiple /> <br>
+                            <button type="submit" class="custom-button">Upload Now</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Alzheimer's disease  All rights reserved. Designed by <a href="#">Srinivas</a>.</p>
+    </footer>
+
+    <!-- JavaScript for Dropdown -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggle = document.querySelector('.dropdown-toggle');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+
+            // Toggle dropdown visibility when "Model" is clicked
+            dropdownToggle.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default anchor behavior
+                const isVisible = dropdownMenu.style.display === 'block';
+                dropdownMenu.style.display = isVisible ? 'none' : 'block';
+            });
+
+            // Close dropdown when clicking outside of it
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.dropdown')) {
+                    dropdownMenu.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
